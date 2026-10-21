@@ -1,0 +1,17 @@
+{
+  "name": "gamma-squeeze-web",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Gamma Squeeze website + app backend: Vercel serverless API, Supabase, Stripe",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node scripts/build-frontend.mjs",
+    "seed": "node scripts/make-seed.mjs > supabase/seed.sql",
+    "test": "node --test test/api.test.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "stripe": "^18.5.0"
+  }
+}
