@@ -44,15 +44,14 @@ function homeToday(h){
   const used = new Set(picks.map(p=>p.a.id));
   const pool = ARTICLES.filter(a=>!used.has(a.id)).sort((a,b)=>(b.date.startsWith('今天')?1:0)-(a.date.startsWith('今天')?1:0));
   const take = n => pool.splice(0, n);
+  h += zone('oei', `<section class="pad" aria-label="Option Edge Index">${oeiCard()}</section>`);
   h += zone('lead', `<section aria-label="编辑精选">${posterCard(lead.a,{full:true, why:lead.why})}</section>`);
   if(rest.length) h += zone('grid', `<section class="pad" aria-label="精选">${gridCards(rest.map(p=>p.a))}</section>`);
-  h += zone('tiles', `<section class="pad" aria-label="市场">${chartTiles(['SPX','VIX','US10Y','ES','GOLD','WTI'])}</section>`);
   const B=DAILY_BRIEF;
   h += zone('brief', `<section class="pad" aria-label="每日宏观简报">
     <h3 class="serif brief-h" style="margin-top:0">${esc(B.title)}</h3>
     <ol class="brief">${B.items.map(([k,t])=>`<li><span class="brief-k">${k}</span><span>${esc(t)}</span></li>`).join('')}</ol>
     ${!S.newsletter?`<form data-form="newsletter" class="brief-form"><label for="nl-email" class="sr">邮箱</label><input id="nl-email" class="input" type="email" required placeholder="每个交易日 06:30 发送到邮箱" autocomplete="email"><button class="btn primary" type="submit">订阅简报</button></form>`:''}</section>`);
-  h += zone('oei', `<section class="pad" aria-label="Option Edge Index">${oeiCard()}</section>`);
   h += zone('poster', `<section class="pad" aria-label="深度研究">${take(1).map(a=>posterCard(a)).join('')}</section>`);
   h += zone('grid', `<section class="pad" aria-label="深度研究">${gridCards(take(4))}</section>`);
   h += zone('earn', `<section aria-label="财报数据解析">${earnRail()}</section>`);
