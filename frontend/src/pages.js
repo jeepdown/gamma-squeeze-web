@@ -117,7 +117,7 @@ function pageHome(){
   const arts = ARTICLES.filter(a=> ch==='今日' || a.chan===ch);
   if(arts.length && ch==='今日') h += zone('front', frontPage(arts), 'A1');
   else if(arts.length){
-    h += zone('front', `<section class="pad" aria-label="深度">${arts.slice(0,1).map(bigCard).join('')}${arts.slice(1,6).map(artRow).join('')}</section>`, 'Research');
+    h += zone('front', `<section class="pad" aria-label="深度">${arts.slice(0,1).map(a=>posterCard(a)).join('')}<div style="margin-top:20px">${gridCards(arts.slice(1,7))}</div></section>`, 'Research');
   }
   if(ch==='今日' || ch==='宏观' || ch==='美国政治') h += zone('official', officialZone(), 'Data');
   if(ch==='今日' || ch==='期权'){ h += zone('gamma', `<div class="pad">${gammaCard('SPX')}</div>`, 'Gamma'); }
