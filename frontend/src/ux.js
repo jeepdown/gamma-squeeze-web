@@ -10,7 +10,6 @@ function masthead(){
       <span style="display:flex"><button class="icon-btn bell" data-go="inbox" aria-label="消息提醒${unreadCount()?'，'+unreadCount()+' 条未读':''}">${IC.bell}${unreadCount()?`<span class="bell-n">${unreadCount()}</span>`:''}</button><button class="icon-btn" style="justify-content:flex-end" data-go="search" aria-label="搜索">${IC.search}</button></span>
     </div>
     <h1 class="brand mast-brand">Gamma Squeeze</h1>
-    <div class="mast-sub latin">Independent Macro &amp; Derivatives Research</div>
   </header>`;
 }
 

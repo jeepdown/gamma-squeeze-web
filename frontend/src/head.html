@@ -748,6 +748,7 @@ sup.fn a{font-family:var(--f-sans);font-size:.62em;font-weight:700;color:var(--b
 
 /* Round 10: centred masthead */
 .mast-brand,.mast-sub{text-align:center}
+.mast{padding-bottom:22px}
 
 /* Round 11: editorial images (illustrations until licensed photos are added) */
 :root{--ill-a:#00098F;--ill-b:#E9EBF2;--ill-c:#8FA2FF;--ill-k:#141833;--ill-s:#3A3F63}
@@ -865,7 +866,7 @@ html.intro-on body{overflow:hidden}
 #intro{position:fixed;inset:0;z-index:1000;background:var(--bg);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden}
 #intro .in-art{width:min(66vw,280px);height:auto;overflow:visible}
 #intro .sc{animation:in-out .55s var(--ease) var(--out) forwards}
-#intro .sq{transform-box:view-box;transform-origin:120px 150px;animation:in-squeeze .5s cubic-bezier(.7,0,.3,1) 4.9s forwards}
+#intro .sq{transform-box:view-box;transform-origin:120px 150px;animation:in-squeeze .5s cubic-bezier(.7,0,.3,1) 1.8s forwards}
 #intro .sc .ln,#intro .sc3 .ln{animation-duration:.6s}
 #intro .sc .tx,#intro .sc3 .tx{animation-duration:.6s}
 #intro .ln{fill:none;stroke:currentColor;stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:0;animation:in-draw .9s cubic-bezier(.45,.05,.25,1) var(--d) forwards}
@@ -882,8 +883,8 @@ html.intro-on body{overflow:hidden}
 #intro .dot{fill:currentColor;opacity:0;animation:in-fade .3s ease var(--d) forwards}
 #intro .in-mark{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
 #intro .in-word{overflow:hidden;padding:4px 2px}
-#intro .in-word .brand{display:block;color:var(--ink);font-size:44px;white-space:nowrap;transform:translateY(110%);animation:in-rise .8s var(--ease) 5.35s forwards}
-#intro .in-rule{display:block;width:120px;height:1px;background:var(--ink);margin-top:14px;transform:scaleX(0);animation:in-release .8s var(--ease) 5.6s forwards}
+#intro .in-word .brand{display:block;color:var(--ink);font-size:44px;white-space:nowrap;transform:translateY(110%);animation:in-rise .8s var(--ease) 2.2s forwards}
+#intro .in-rule{display:block;width:120px;height:1px;background:var(--ink);margin-top:14px;transform:scaleX(0);animation:in-release .8s var(--ease) 2.45s forwards}
 #intro .in-sub{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:14px;opacity:0;animation:in-fade .7s ease 5.8s forwards}
 #intro .in-skip{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom,0px));text-align:center;font-size:11px;letter-spacing:.2em;color:var(--muted);opacity:0;animation:in-fade .6s ease .8s forwards}
 #intro.out{animation:in-exit .7s var(--ease) forwards;pointer-events:none}
