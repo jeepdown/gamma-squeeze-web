@@ -98,6 +98,7 @@ function pageHome(){
       <div class="grid3" style="margin-top:10px">${S.watchlist.slice(0,6).map(s=>`<button class="tile" data-go="t-${s}"><span class="sym">${symLabel(s)}</span><span class="px" data-q="${s}" data-f="px">${pxText(s)}</span><span class="ch ${quote(s).up?'up':'down'}" data-q="${s}" data-f="ch">${chText(s)}</span></button>`).join('')}
       ${S.watchlist.length<3?`<button class="tile" data-go="watch" style="align-items:center;justify-content:center;color:var(--muted)">${IC.plus}<span class="xs">添加</span></button>`:''}</div></section>`, 'Today');
   }
+  if(ch==='期权') h += zone('oei', `<section class="pad" aria-label="Option Edge Index">${oeiCard()}</section>`, '');
   if(ch==='期权' || ch==='美股'){
     const rg=regime('SPX');
     h += zone('lead', `<section class="pad"><div class="tintbox" style="display:flex;gap:12px;align-items:center">

@@ -81,12 +81,29 @@
 
 `public/` 可以直接作为 Capacitor 的 web 目录，打包成 iOS 和 Android App，接口和账号与网站共用。在 iOS App 内销售订阅要遵守苹果规则：使用苹果内购，或在美国区通过外部链接引导到网站支付。
 
+## 七、Option Edge Index（OEI）
+
+`oei/` 是 OEI 计算引擎（Python），按方法论 v0.1 计算 SPY-OEI、QQQ-OEI、Fair Vol、Edge Spread、VRP 和 30 天预期波动。
+
+- **安装**：`pip install -r oei/requirements.txt`（只需要 numpy）。
+- **输入**：每个代码一个文件夹，例如 `data/SPY/`：
+  - `chain_<到期日>.csv`：每个到期日一个文件，列为 `strike,call_bid,call_ask,put_bid,put_ask`，至少包含跨 30 天两侧的两个到期日。
+  - `prices.csv`：`date,close`，每日收盘价，至少约 300 行。
+  - `meta.json`：`{"spot": 672.4, "rate": 0.041, "dividends": [["2026-12-19", 1.85]]}`。
+  - 共用的 `data/events.csv`：`date,name`，列出历史和未来的 CPI、FOMC、非农、大型科技股财报日期。
+- **运行**：`python3 oei/run.py --data data --asof 2026-10-26` 输出当日快照 JSON；加 `--publish` 并设置环境变量 `GS_API`（网站地址）和 `GS_TOKEN`（管理员登录令牌）即写入网站，网站和 App 同时更新。
+- **频率**：每个交易日美东 15:45 用当时的期权报价运行一次。
+- **权限**：`/api/oei` 对所有人返回 OEI 和预期波动，Fair Vol、Edge Spread、VRP 和历史明细只返回给订阅用户。
+- **数据**：期权报价必须来自授权数据源（如 Cboe DataShop、ORATS、Polygon）。网站在收到第一份正式快照之前显示标注为"示例数据"的读数。
+- **测试**：`python3 -m unittest discover -s oei/tests`。
+
 ## 测试
 
 ```
 npm install
 npm test        # 接口测试：付费墙、优惠倒计时、Checkout、Webhook 验签与幂等、发布权限
 npm run build   # 生成 public/
+python3 -m unittest discover -s oei/tests   # OEI 引擎测试
 ```
 
 ## 目前仍是原型级的部分

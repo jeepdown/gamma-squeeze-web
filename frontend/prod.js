@@ -24,7 +24,20 @@ function applyMe(me){
 async function refreshMe(){
   try{ applyMe(await api('me')); }catch(e){ applyMe({signedIn:false}); }
   if(isPro()) loadPremium();
+  loadOei();
   rerender();
+}
+
+// OEI: public readers get OEI and Expected Move; subscribers also get Fair Vol, Edge Spread and history detail.
+async function loadOei(){
+  try{
+    const d = await api('oei');
+    if(!d.latest) return;   // nothing published yet: keep the labelled sample
+    const hist = {};
+    d.history.forEach(h=>Object.entries(h.rows).forEach(([s,r])=>(hist[s]=hist[s]||[]).push(r)));
+    OEI_DATA = {asof:d.asof, version:d.version, sample:false, rows:d.latest, history:hist};
+    rerender();
+  }catch(e){ /* keep the labelled sample when the API is unreachable */ }
 }
 
 async function loadArticles(){

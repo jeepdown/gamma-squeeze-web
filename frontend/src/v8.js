@@ -21,6 +21,7 @@ function homeToday(h){
       <div class="kicker" style="margin-top:14px">${lead.a.cat}</div><h3 class="lead-h serif">${esc(lead.a.title)}</h3><p class="lead-dek">${esc(lead.a.dek)}</p>
       <div class="lead-meta">${AUTHOR} · ${lead.a.mins} 分钟 · 评论 ${commentCount(lead.a.id)}</div></button>
     <div class="pick-grid">${rest.map(p=>`<button class="pick" data-go="a-${p.a.id}"><div class="pick-fig">${artFigure(p.a, 70)}</div><div class="kicker">${p.a.cat}</div><h3 class="serif pick-h">${esc(p.a.title)}</h3><p class="pick-why">${esc(p.why)}</p><div class="xs muted">${p.a.mins} 分钟</div></button>`).join('')}</div></section>`, '');
+  h += zone('oei', `<section class="pad" aria-label="Option Edge Index">${oeiCard()}</section>`, '');
   h += zone('tiles', `<section class="pad" aria-label="市场">${chartTiles(['SPX','VIX','US10Y','ES','GOLD','WTI'])}</section>`, '');
   const B=DAILY_BRIEF; const sn=liveSnaps().slice(0,3);
   h += zone('brief', `<section class="pad" aria-label="每日宏观简报">

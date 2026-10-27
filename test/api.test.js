@@ -10,7 +10,7 @@ process.env.STRIPE_COUPON_NEWUSER = 'coupon_100'; process.env.STRIPE_WEBHOOK_SEC
 
 // ---- minimal query builder over arrays ----
 function fakeDb(tables, users) {
-  const key = { profiles: 'id', subscriptions: 'id', articles: 'id', snapshots: 'id', datasets: 'kind', stripe_events: 'id' };
+  const key = { profiles: 'id', subscriptions: 'id', articles: 'id', snapshots: 'id', datasets: 'kind', stripe_events: 'id', oei_snapshots: 'asof' };
   const from = name => {
     const rows = tables[name] ||= [];
     let filters = [], op = 'select', payload = null, order = null, lim = null, onlyNull = [];
@@ -144,4 +144,16 @@ test('me reports subscription state', async () => {
   assert.equal((await call(h)).body.signedIn, false);
   const pro = (await call(h, { token: 't2' })).body; assert.equal(pro.subscriber, true); assert.equal(pro.plan, 'annual');
   assert.equal((await call(h, { token: 't1' })).body.subscriber, false);
+});
+
+test('OEI: publish by staff, public fields for everyone, Fair Vol and Edge for subscribers', async () => {
+  const pub = await load('admin/publish');
+  const item = { asof: '2026-10-26', version: '0.1', rows: { SPY: { spot: 671, oei: 18.6, fair_vol: 15.2, edge_spread: 3.4, vrp: 0.0115, expected_move_30d: 35.8 } } };
+  assert.equal((await call(pub, { method: 'POST', token: 't2', body: { kind: 'oei', item } })).status, 403);
+  assert.equal((await call(pub, { method: 'POST', token: 't3', body: { kind: 'oei', item } })).status, 200);
+  const h = await load('oei');
+  const guest = (await call(h)).body;
+  assert.equal(guest.latest.SPY.oei, 18.6); assert.equal(guest.latest.SPY.fair_vol, undefined); assert.equal(guest.history[0].rows.SPY.edge_spread, undefined);
+  const pro = (await call(h, { token: 't2' })).body;
+  assert.equal(pro.latest.SPY.edge_spread, 3.4); assert.equal(pro.full, true);
 });

@@ -92,3 +92,12 @@ begin
 end $$;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users for each row execute function public.handle_new_user();
+
+-- Option Edge Index: one row per daily snapshot (both symbols in payload.rows), written by oei/run.py --publish.
+create table if not exists public.oei_snapshots (
+  asof date primary key,
+  version text not null default '0.1',
+  payload jsonb not null,
+  created_at timestamptz not null default now()
+);
+alter table public.oei_snapshots enable row level security;

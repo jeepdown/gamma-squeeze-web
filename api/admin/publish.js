@@ -1,4 +1,4 @@
-// POST /api/admin/publish {kind:'article'|'snapshot'|'dataset', item} → upsert content (editors and admins only).
+// POST /api/admin/publish {kind:'article'|'snapshot'|'dataset'|'oei', item} → upsert content (editors and admins only).
 // Website and app both read the same API, so one publish updates both.
 import { send, db, readJson, currentUser } from '../../lib/server.js';
 
@@ -23,6 +23,9 @@ export default async function handler(req, res) {
   } else if (kind === 'dataset') {
     if (!['earn', 'insts', 'congress'].includes(item.kind)) return send(res, 400, { error: 'unknown dataset' });
     q = db().from('datasets').upsert({ kind: item.kind, payload: item.payload, source: item.source || null, updated_at: now }).select('kind').single();
+  } else if (kind === 'oei') {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(item.asof || '') || !item.rows) return send(res, 400, { error: 'asof and rows required' });
+    q = db().from('oei_snapshots').upsert({ asof: item.asof, version: item.version || '0.1', payload: item }).select('asof').single();
   } else return send(res, 400, { error: 'unknown kind' });
   const { data, error } = await q;
   if (error) return send(res, 500, { error: error.message });

@@ -106,7 +106,7 @@ function offerBox(left){
 }
 function paywallBox({src, id, intro, note}){
   const left=offerLeft(); const reads=ARTICLES.filter(a=>!a.free && a.id!==id).slice(0,3); const er=upcomingEvents().filter(c=>c.er).length;
-  const ben=[['全部深度研究全文',`研究库 ${ARTICLES.filter(a=>!a.free).length} 篇，每周更新`],['美股财报数据解析',`本季 ${er} 家公司：历史表现、期权定价与情景分析`],['盘中快照里的 Gamma 关键价位','Call Wall、翻转点、Put Wall 与完整地形'],['机构持仓与国会交易','ARK、Citadel 等机构持仓变化，议员公开申报交易'],['研究数据与图表','文中数据框、图表与脚注来源'],['社区发言与作者交流','订阅用户可发言，研究部作者回复'],['Pro 视频与教学系列全集',`期权丛书会员 ${10-bookCfg().discount/10} 折`]];
+  const ben=[['全部深度研究全文',`研究库 ${ARTICLES.filter(a=>!a.free).length} 篇，每周更新`],['美股财报数据解析',`本季 ${er} 家公司：历史表现、期权定价与情景分析`],['盘中快照里的 Gamma 关键价位','Call Wall、翻转点、Put Wall 与完整地形'],['Option Edge Index 完整读数','SPY、QQQ 的 Fair Vol、Edge Spread 与一年历史分位'],['机构持仓与国会交易','ARK、Citadel 等机构持仓变化，议员公开申报交易'],['研究数据与图表','文中数据框、图表与脚注来源'],['社区发言与作者交流','订阅用户可发言，研究部作者回复'],['Pro 视频与教学系列全集',`期权丛书会员 ${10-bookCfg().discount/10} 折`]];
   return `<div class="paywall"><div style="display:flex;align-items:center;gap:8px"><span class="tag pro">PRO</span><span class="small muted">${note||'本节起为订阅内容'}</span></div>
     <h2 class="h2">订阅查看全文</h2>
     <p class="small muted" style="margin:0">${intro}</p>

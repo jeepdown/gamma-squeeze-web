@@ -1,5 +1,5 @@
 // ---------- Router & render ----------
-const ROUTES = ['home','watch','research','video','me','pricing','calendar','academy','search','method','admin','saved','books','shelf','heatmap','community','inbox'];
+const ROUTES = ['home','watch','research','video','me','pricing','calendar','academy','search','method','admin','saved','books','shelf','heatmap','community','inbox','oei'];
 function validRoute(r){ return ROUTES.includes(r) || (r.startsWith('t-') && SYMS[r.slice(2)]) || (r.startsWith('a-') && ARTICLES.some(a=>a.id===r.slice(2))) || (r.startsWith('b-') && BOOKS.some(b=>b.id===r.slice(2))) || (r.startsWith('earn-') && EARN[r.slice(5)]); }
 function render(){
   const r=U.route; const app=$('#app');
@@ -20,6 +20,7 @@ function render(){
   else if(r==='shelf') html=pageShelf();
   else if(r==='community') html=pageCommunity();
   else if(r==='inbox') html=pageInbox();
+  else if(r==='oei') html=pageOei();
   else if(r.startsWith('earn-')) html=pageEarn(r.slice(5));
   else if(r.startsWith('b-')) html=pageBook(r.slice(2));
   else if(r.startsWith('t-')) html=pageTicker(r.slice(2));
@@ -128,6 +129,7 @@ document.addEventListener('click', e=>{
     case 'notif-set': S.notif[arg]=!S.notif[arg]; save(); rerender(); break;
     case 'offer-reset': S.offerStart=null; S.offerUsed=false; save(); rerender(); toast('演示倒计时已重置，下次看到付费墙时重新开始'); break;
     case 'inst': U.inst=arg; rerender(); break;
+    case 'oeisym': U.oeisym=arg; rerender(); break;
     case 'cg': { U.cg=U.cg||{side:'全部', ch:'全部'}; U.cg[a1]=a2; rerender(); break; }
     case 'perm': { S.perms=S.perms||JSON.parse(JSON.stringify(MOD_DEFAULT)); const p=S.perms[a1]=S.perms[a1]||{}; p[a2]=p[a2]?0:1; save(); rerender(); toast(`${a1}：${(MOD_PERMS.find(x=>x[0]===a2)||[])[1]} 已${p[a2]?'开启':'关闭'}`); break; }
     case 'cal-open': U.calf=arg||'全部'; track('event_tape',{kind:arg}); go('calendar'); break;
