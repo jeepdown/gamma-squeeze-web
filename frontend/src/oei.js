@@ -48,7 +48,7 @@ function oeiLines(sym, H, showFair){
   return `<svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" preserveAspectRatio="none" aria-hidden="true">
     <path d="${path('oei')} L${W} ${H} L0 ${H}Z" fill="var(--band-ink)" opacity=".07"/>
     <path d="${path('oei')}" fill="none" stroke="var(--band-ink)" stroke-width="1.8" vector-effect="non-scaling-stroke"/>
-    ${showFair?`<path d="${path('fair_vol')}" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/>`:''}</svg>`;
+    ${showFair?`<path d="${path('fair_vol')}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/>`:''}</svg>`;
 }
 function oeiEdgeBars(sym, H){
   const h=oeiHistory(sym), n=h.length, W=320; H=H||100; if(n<2) return ''; const m=Math.max(...h.map(x=>Math.abs(x.edge_spread)))||1, mid=H/2, bw=W/n;

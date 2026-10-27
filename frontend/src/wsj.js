@@ -81,21 +81,57 @@ function reveal(){
 const uxAfterRenderBase = uxAfterRender;
 uxAfterRender = function(){ uxAfterRenderBase(); reveal(); };
 
-// Page transitions: View Transitions where supported; the tapped card's photo morphs into the article hero.
-let _vtFrom=null, _inVT=false;
-document.addEventListener('click', e=>{ _vtFrom = e.target.closest && e.target.closest('[data-go]'); }, true);
-function withVT(update){
-  if(REDUCED || !document.startViewTransition){ update(); return; }
-  const src = _vtFrom && _vtFrom.isConnected ? _vtFrom.querySelector('.ph') : null; _vtFrom=null;
-  if(src) src.style.viewTransitionName='hero';
-  _inVT=true;
-  const t=document.startViewTransition(()=>{ update(); const dst=document.querySelector('.art-head .hero-img'); if(src && dst) dst.style.viewTransitionName='hero'; });
-  t.finished.finally(()=>{ _inVT=false; document.querySelectorAll('[style*="view-transition-name"]').forEach(x=>x.style.viewTransitionName=''); });
+// Page transitions. Reading pages (articles, earnings analysis, OEI) open like a page laid down from the
+// right and close by sliding the page away to the right; other routes cross-fade.
+const isReading = r => /^(a-|earn-)/.test(r||'') || r==='oei';
+let _inVT=false;
+function turn(kind, update){
+  const root=document.documentElement;
+  if(REDUCED){ update(); return; }
+  if(!document.startViewTransition){ update(); if(kind) fallbackTurn(kind); return; }
+  root.dataset.vt=kind||'fade'; _inVT=true;
+  const t=document.startViewTransition(update);
+  t.finished.finally(()=>{ _inVT=false; delete root.dataset.vt; root.style.removeProperty('--dx'); });
+}
+function fallbackTurn(kind){
+  const a=$('#app'); a.classList.remove('turn-open','turn-close'); void a.offsetWidth; a.classList.add('turn-'+kind);
+  setTimeout(()=>a.classList.remove('turn-'+kind), 800);
 }
 const goBase = go, backBase = back, enterAnimBase = enterAnim;
-go = function(r, opts){ withVT(()=>goBase(r, opts)); };
-back = function(){ withVT(backBase); };
+go = function(r, opts){
+  const from=U.route, kind = isReading(r) && r!==from ? 'open' : (isReading(from) && !isReading(r) ? 'close' : null);
+  turn(kind, ()=>goBase(r, opts));
+};
+back = function(){ turn(isReading(U.route) ? 'close' : null, backBase); };
 enterAnim = function(){ if(!_inVT) enterAnimBase(); };
+
+// Swipe right anywhere on a reading page to go back. The page follows the finger, then slides away.
+(function(){
+  let x0=0, y0=0, t0=0, dx=0, lock=null;
+  const app=()=>document.getElementById('app');
+  const skip=el=>el.closest('.er-rail,.v-rail,.series-rail,.ep-rail,.tiles,.chan,.strip,.tape,.seg,table,input,textarea,[data-noswipe]');
+  addEventListener('touchstart', e=>{
+    lock=null; dx=0;
+    if(!isReading(U.route) || e.touches.length>1 || skip(e.target) || document.getElementById('sheet')) { lock='no'; return; }
+    x0=e.touches[0].clientX; y0=e.touches[0].clientY; t0=Date.now();
+  }, {passive:true});
+  addEventListener('touchmove', e=>{
+    if(lock==='no') return;
+    const mx=e.touches[0].clientX-x0, my=e.touches[0].clientY-y0;
+    if(!lock){ if(Math.abs(mx)<10 && Math.abs(my)<10) return; lock = mx>0 && Math.abs(mx)>Math.abs(my)*1.4 ? 'x' : 'no'; if(lock==='no') return; }
+    e.preventDefault(); dx=Math.max(0,mx);
+    const a=app(); a.style.transition='none'; a.style.transform=`translateX(${dx}px)`; a.classList.add('dragging');
+  }, {passive:false});
+  addEventListener('touchend', ()=>{
+    if(lock!=='x') return; lock=null;
+    const a=app(), v=dx/Math.max(1,Date.now()-t0);
+    const reset=()=>{ a.style.transform=''; a.style.transition=''; a.classList.remove('dragging'); };
+    if(dx>Math.min(110, innerWidth*0.28) || v>0.6){
+      if(!REDUCED && document.startViewTransition){ document.documentElement.style.setProperty('--dx', dx+'px'); reset(); back(); }
+      else { a.style.transition='transform .3s var(--ease)'; a.style.transform='translateX(100%)'; setTimeout(()=>{ reset(); backBase(); }, 300); }
+    } else { a.style.transition='transform .3s var(--ease)'; a.style.transform=''; setTimeout(reset, 320); }
+  });
+})();
 
 // Bottom navigation tucks away while reading down, returns on any upward scroll.
 (function(){
