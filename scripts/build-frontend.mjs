@@ -2,7 +2,7 @@
 // The same public/ folder is the website and the Capacitor app's web bundle.
 import { readFileSync, writeFileSync, mkdirSync, cpSync, rmSync } from 'node:fs';
 
-const ORDER = ['data','data2','snaps','core','live','books','pages','pages2','admin','markets','imgs','v8','earn','flows','oei','ux','wsj','main'];
+const ORDER = ['data','data2','snaps','core','live','books','pages','pages2','admin','markets','imgs','v8','earn','flows','oei','ux','wsj','intro','main'];
 const read = f => readFileSync(new URL(`../frontend/src/${f}`, import.meta.url), 'utf8');
 const must = (s, find, repl, file) => { if (!s.includes(find)) throw new Error(`build: anchor not found in ${file}: ${find.slice(0, 60)}`); return s.replace(find, repl); };
 

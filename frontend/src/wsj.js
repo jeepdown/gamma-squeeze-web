@@ -105,25 +105,6 @@ enterAnim = function(){ if(!_inVT) enterAnimBase(); };
     document.body.classList.toggle('nav-tuck', d>0 && y>160); y0=y; }, {passive:true});
 })();
 
-// ----- Opening animation -----
-// Gamma profile by strike draws in, squeezes to a single line, and releases into the wordmark.
-function introPlay(){
-  let seen=false; try{ seen=sessionStorage.getItem('gs_intro')==='1'; sessionStorage.setItem('gs_intro','1'); }catch(e){}
-  if(seen || /admin/.test(location.hash)) return;
-  const n=23, mid=(n-1)/2, W=276, bw=W/n;
-  const bars=Array.from({length:n},(_,i)=>{ const x=(i-mid)/mid; const g=Math.exp(-x*x*3.2)*(x>-0.38?1:-0.55)+(x<-0.38?-0.25*Math.exp(-((x+0.7)**2)*12):0);
-    const h=Math.max(3,Math.abs(g)*52); const up=g>=0;
-    return `<rect class="ib" x="${(i*bw+1.5).toFixed(1)}" y="${up?60-h:60}" width="${(bw-3).toFixed(1)}" height="${h.toFixed(1)}" style="--d:${(0.28+Math.abs(i-mid)*0.035).toFixed(3)}s;transform-origin:${(i*bw+bw/2).toFixed(1)}px 60px" fill="${up?'var(--band-ink)':'var(--neg)'}" opacity="${up?1:.75}"/>`; }).join('');
-  const el=document.createElement('div'); el.id='intro'; el.setAttribute('aria-hidden','true');
-  el.innerHTML=`<div class="in-stage"><svg class="in-svg" viewBox="0 0 ${W} 120" width="${W}" height="120"><g class="in-bars">${bars}</g><line class="in-base" x1="0" x2="${W}" y1="60" y2="60"/></svg>
-    <div class="in-word"><span class="brand">Gamma Squeeze</span></div><i class="in-rule"></i></div>
-    <div class="in-sub latin">Independent Macro &amp; Derivatives Research</div>`;
-  document.body.appendChild(el); document.documentElement.classList.add('intro-on');
-  const done=()=>{ if(el.classList.contains('out')) return; el.classList.add('out'); document.documentElement.classList.remove('intro-on'); setTimeout(()=>el.remove(), 650); };
-  el.addEventListener('click', done);
-  setTimeout(done, REDUCED ? 900 : 3100);
-}
-introPlay();
 
 // Video: every episode and series gets a photo, not a flat placeholder.
 const VIDEO_IMGS=['trader','pit','desk','trader2','suit','analyst2','towers','analyst'];
