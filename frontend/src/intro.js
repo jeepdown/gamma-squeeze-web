@@ -60,8 +60,9 @@ function introArt(){
     <defs><filter id="in-sketch"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7"/><feDisplacementMap in="SourceGraphic" scale="2.2"/></filter></defs>${g.join('')}</svg>`;
 }
 function introPlay(){
-  let seen=false; try{ seen=sessionStorage.getItem('gs_intro')==='1'; sessionStorage.setItem('gs_intro','1'); }catch(e){}
-  if(seen || /admin/.test(location.hash)) return;
+  // Plays on every app open (Ed: a sense of ceremony); tap anywhere to skip. Tests set gs_nointro to bypass.
+  let off=false; try{ off=sessionStorage.getItem('gs_nointro')==='1'; }catch(e){}
+  if(off || /admin/.test(location.hash)) return;
   const el=document.createElement('div'); el.id='intro'; el.setAttribute('aria-hidden','true');
   el.innerHTML=`${introArt()}<div class="in-mark"><div class="in-word"><span class="brand">Gamma Squeeze</span></div><i class="in-rule"></i>
     <div class="in-sub latin">Independent Macro &amp; Derivatives Research</div></div><div class="in-skip">轻触跳过</div>`;
