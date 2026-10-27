@@ -863,8 +863,12 @@ body.nav-tuck .bnav{transform:translate(-50%,110%)}
 /* Opening animation: one ink on paper, exhibition-like */
 html.intro-on body{overflow:hidden}
 #intro{position:fixed;inset:0;z-index:1000;background:var(--bg);color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden}
-#intro .in-art{width:min(92vw,440px);height:min(90vh,800px);transform-origin:50% 50%;animation:in-recede 1s var(--ease) 4.2s forwards}
-#intro .ln{fill:none;stroke:currentColor;stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:in-draw .9s cubic-bezier(.45,.05,.25,1) var(--d) forwards}
+#intro .in-art{width:min(66vw,280px);height:auto;overflow:visible}
+#intro .sc{animation:in-out .55s var(--ease) var(--out) forwards}
+#intro .sq{transform-box:view-box;transform-origin:120px 150px;animation:in-squeeze .5s cubic-bezier(.7,0,.3,1) 4.9s forwards}
+#intro .sc .ln,#intro .sc3 .ln{animation-duration:.6s}
+#intro .sc .tx,#intro .sc3 .tx{animation-duration:.6s}
+#intro .ln{fill:none;stroke:currentColor;stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:0;animation:in-draw .9s cubic-bezier(.45,.05,.25,1) var(--d) forwards}
 #intro .ln.hair{stroke-width:.6}
 #intro .ln.mark{stroke-width:1.5}
 #intro .ln.frame{stroke-width:.5;animation-duration:1.6s}
@@ -878,14 +882,15 @@ html.intro-on body{overflow:hidden}
 #intro .dot{fill:currentColor;opacity:0;animation:in-fade .3s ease var(--d) forwards}
 #intro .in-mark{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
 #intro .in-word{overflow:hidden;padding:4px 2px}
-#intro .in-word .brand{display:block;color:var(--ink);font-size:44px;white-space:nowrap;transform:translateY(110%);animation:in-rise .8s var(--ease) 4.6s forwards}
-#intro .in-rule{display:block;width:120px;height:1px;background:var(--ink);margin-top:14px;transform:scaleX(0);animation:in-release .8s var(--ease) 4.85s forwards}
-#intro .in-sub{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:14px;opacity:0;animation:in-fade .7s ease 5.05s forwards}
+#intro .in-word .brand{display:block;color:var(--ink);font-size:44px;white-space:nowrap;transform:translateY(110%);animation:in-rise .8s var(--ease) 5.35s forwards}
+#intro .in-rule{display:block;width:120px;height:1px;background:var(--ink);margin-top:14px;transform:scaleX(0);animation:in-release .8s var(--ease) 5.6s forwards}
+#intro .in-sub{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:14px;opacity:0;animation:in-fade .7s ease 5.8s forwards}
 #intro .in-skip{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom,0px));text-align:center;font-size:11px;letter-spacing:.2em;color:var(--muted);opacity:0;animation:in-fade .6s ease .8s forwards}
 #intro.out{animation:in-exit .7s var(--ease) forwards;pointer-events:none}
-@keyframes in-draw{to{stroke-dashoffset:0}}
+@keyframes in-draw{0%{opacity:0;stroke-dashoffset:1}1%{opacity:1}100%{opacity:1;stroke-dashoffset:0}}
 @keyframes in-write{from{opacity:0;clip-path:inset(0 100% 0 0)}to{opacity:1;clip-path:inset(0 0 0 0)}}
-@keyframes in-recede{to{opacity:.05;transform:scale(.96)}}
+@keyframes in-out{to{opacity:0;filter:blur(2px)}}
+@keyframes in-squeeze{60%{transform:scaleX(.01) scaleY(1);opacity:1}to{transform:scaleX(.01) scaleY(.2);opacity:0}}
 @keyframes in-rise{to{transform:none}}
 @keyframes in-release{to{transform:scaleX(1)}}
 @keyframes in-fade{to{opacity:1}}
