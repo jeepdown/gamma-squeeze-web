@@ -45,6 +45,7 @@ function homeToday(h){
   const pool = ARTICLES.filter(a=>!used.has(a.id)).sort((a,b)=>(b.date.startsWith('今天')?1:0)-(a.date.startsWith('今天')?1:0));
   const take = n => pool.splice(0, n);
   h += zone('oei', `<section class="pad" aria-label="Option Edge Index">${oeiCard()}</section>`);
+  h += zone('chans', chanRail());
   h += zone('lead', `<section aria-label="编辑精选">${posterCard(lead.a,{full:true, why:lead.why})}</section>`);
   if(rest.length) h += zone('grid', `<section class="pad" aria-label="精选">${gridCards(rest.map(p=>p.a))}</section>`);
   const B=DAILY_BRIEF;
@@ -153,3 +154,55 @@ function seriesCard(se){
   const eps=VIDEOS.filter(v=>v.series===se.name);
   return `<button class="series-card sc-photo" data-act="vseries" data-arg="${se.name}">${photo(vidImg(se.name),'',true)}<span class="sc-kind">${se.kind}</span><span class="sc-name serif">${se.name}</span><span class="sc-meta">${se.season} · ${eps.length} ${se.name==='周度复盘'?'期':'集'}</span></button>`;
 }
+
+// ----- Channel rail (Ed): one channel = one large picture, rotating under the OEI card -----
+const CHAN_CARD = {
+  '美股':['US Equities','towers'], '期权':['Options','trader'], '机构持仓':['13F Holdings','suit'], '国会交易':['Congress Trades','capitol'],
+  '债券':['Rates','bond'], '期货':['Futures','pit'], '大宗商品':['Commodities','gold'], '宏观':['Macro','fed'], '美国政治':['Politics','news'], '视频':['Video','desk']};
+const CHAN_LINE = {'机构持仓':'13F 季度持仓变动与机构调仓', '国会交易':'议员申报交易与市场相关性', '视频':'纪录片、教学与每周复盘'};
+function chanRail(){
+  const list = CHANNELS.filter(c=>CHAN_CARD[c]);
+  const card = (c,i,clone)=>{
+    const [latin,img]=CHAN_CARD[c], arts=ARTICLES.filter(a=>a.chan===c), a=arts[0];
+    const line = a ? a.title : CHAN_LINE[c] || '';
+    const pro = c==='机构持仓'||c==='国会交易';
+    return `<button class="cr-card" data-act="chan" data-arg="${c}"${clone?' aria-hidden="true" tabindex="-1"':''}>${photo(img,'cr-media',true)}
+      <span class="cr-top"><span class="cr-n num">${String(i+1).padStart(2,'0')}</span>${pro?'<span class="pc-badge">PRO</span>':''}</span>
+      <span class="cr-body"><span class="cr-k latin">${latin}</span><span class="cr-h serif">${c}</span>
+        <span class="cr-d">${a?'最新 · ':''}${esc(line)}</span><span class="cr-go">${arts.length?`${arts.length} 篇研究 · `:''}进入栏目 →</span></span></button>`;
+  };
+  // The first two cards are repeated at the end so the rotation loops without a visible rewind.
+  return `<section aria-label="栏目" class="cr-wrap"><div class="cr" data-n="${list.length}">${list.map((c,i)=>card(c,i)).join('')}${list.slice(0,2).map((c,i)=>card(c,i,true)).join('')}</div>
+    <div class="cr-bar pad"><span class="cr-count num"><b>01</b> / ${String(list.length).padStart(2,'0')}</span><span class="cr-prog"><i></i></span></div></section>`;
+}
+let _crTimer=null;
+function chanRotate(){
+  clearTimeout(_crTimer);
+  const rail=document.querySelector('#app .cr'); if(!rail) return;
+  const n=+rail.dataset.n, cards=[...rail.children], bar=rail.parentNode.querySelector('.cr-prog i'), cnt=rail.parentNode.querySelector('.cr-count b');
+  const step=()=>cards[1].offsetLeft-cards[0].offsetLeft;
+  const idx=()=>Math.round(rail.scrollLeft/step());
+  let paused=false, visible=true, resume=null;
+  const mark=()=>{ const i=idx()%n; cnt.textContent=String(i+1).padStart(2,'0'); cards.forEach((c,k)=>c.classList.toggle('on', k===idx())); };
+  const restartBar=()=>{ if(!bar) return; bar.style.transition='none'; bar.style.width='0'; void bar.offsetWidth; if(!REDUCED){ bar.style.transition='width 4s linear'; bar.style.width='100%'; } };
+  const tick=()=>{
+    if(!rail.isConnected) return;
+    if(!paused && visible && !document.hidden){
+      const next=idx()+1; rail.scrollTo({left:next*step(), behavior:'smooth'});
+      if(next>=n) setTimeout(()=>{ if(rail.isConnected){ rail.scrollTo({left:(next-n)*step(), behavior:'instant'}); mark(); } }, 700);
+    }
+    restartBar(); _crTimer=setTimeout(tick, 4000);
+  };
+  const hold=()=>{ paused=true; clearTimeout(resume); if(bar){ bar.style.transition='none'; bar.style.width='0'; } };
+  const release=()=>{ clearTimeout(resume); resume=setTimeout(()=>{ paused=false; }, 2500); };
+  rail.addEventListener('pointerdown', hold, {passive:true}); rail.addEventListener('touchstart', hold, {passive:true});
+  rail.addEventListener('pointerup', release, {passive:true}); rail.addEventListener('touchend', release, {passive:true});
+  rail.addEventListener('mouseenter', hold); rail.addEventListener('mouseleave', release);
+  let st=null; rail.addEventListener('scroll', ()=>{ clearTimeout(st); st=setTimeout(()=>{ if(idx()>=n){ rail.scrollTo({left:(idx()-n)*step(), behavior:'instant'}); } mark(); }, 120); }, {passive:true});
+  if('IntersectionObserver' in window) new IntersectionObserver(es=>{ visible=es[0].isIntersecting; }, {threshold:0.4}).observe(rail);
+  mark(); if(REDUCED) return; restartBar(); _crTimer=setTimeout(tick, 4000);
+}
+const uxAfterRenderCR = uxAfterRender;
+uxAfterRender = function(){ uxAfterRenderCR(); chanRotate(); };
+// Opening a channel from the rail starts at the top of that channel.
+document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('.cr-card')) setTimeout(()=>scrollTo(0,0), 0); });

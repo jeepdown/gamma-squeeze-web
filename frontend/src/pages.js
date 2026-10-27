@@ -86,7 +86,7 @@ function zone(kind, html, mark){ return `<div class="zone z-${kind}">${html}</di
 function pageHome(){
   const ch = U.chan;
   let h = masthead() + strip() + eventTape();
-  h += `<nav class="chan pad" aria-label="频道" role="tablist">${CHANNELS.map(c=>`<button role="tab" aria-selected="${c===ch}" data-act="chan" data-arg="${c}">${c}</button>`).join('')}</nav>`;
+  if(ch!=='今日') h += `<nav class="chan pad" aria-label="频道" role="tablist">${CHANNELS.map(c=>`<button role="tab" aria-selected="${c===ch}" data-act="chan" data-arg="${c}">${c}</button>`).join('')}</nav>`;
   if(ch==='GEX 热力图'){ heatPlay(); return h + zone('heat', heatView(), 'GEX') + zone('snap', `<section class="pad"><div class="sec-head"><h2 class="h2">期权 · Gamma 快照</h2><span class="tag">免费</span></div>${liveSnaps(s=>s.sector==='期权').slice(0,5).map(snapRow).join('')}</section>`, 'Snapshot') + zone('feed', exploreFeed('home-GEX')); }
   if(ch==='机构持仓') return h + flowsPage('inst');
   if(ch==='国会交易') return h + flowsPage('cg');
